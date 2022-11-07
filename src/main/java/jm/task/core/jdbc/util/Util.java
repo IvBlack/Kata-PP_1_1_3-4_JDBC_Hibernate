@@ -1,10 +1,8 @@
 package jm.task.core.jdbc.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.*;
-import java.sql.*;
-import java.util.Properties;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class Util {
 
@@ -27,7 +25,7 @@ public class Util {
     private final static String pass = "yourpasswd";
     private final static String url = "jdbc:mysql://localhost/pp1_4?serverTimezone=Europe/Moscow&useSSl=false";
 
-    public Connection link() {
+    public static Connection link() {
         //инициализируем подключение
         Connection con = null;
 
