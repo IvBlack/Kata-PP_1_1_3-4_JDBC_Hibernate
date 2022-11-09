@@ -39,4 +39,17 @@ public class Util {
         }
         return con;
     }
+
+    /*
+    public void freeConnection(Connection con) {
+        if (con == null) {
+            return;
+        }
+        try {
+            con.close();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+    */
 }

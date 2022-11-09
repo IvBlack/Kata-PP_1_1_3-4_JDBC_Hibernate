@@ -17,17 +17,46 @@ public class UserDaoJDBCImpl extends  Util implements UserDao {
     }
 
     public void createUsersTable() {
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            String request = "CREATE TABLE `users` (`id` BIGINT NOT NULL AUTO_INCREMENT,\n" +
+                    "  `name` VARCHAR(45) NOT NULL,\n" +
+                        "  `lastname` VARCHAR(45) NOT NULL,\n" +
+                            "  `age` TINYINT NOT NULL,\n" +
+                            "  PRIMARY KEY (`id`))\n" +
+                    "DEFAULT CHARACTER SET = utf8;";
 
+            con = Util.link();
+            stmt = con.createStatement();
+
+            stmt.execute(request);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) { stmt.close(); }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (con != null) { con.close(); }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void dropUsersTable() {
-        Connection con = null;
         Statement stmt;
         try {
-            String sql = "DROP TABLE users;";
+            con = Util.link();
+            String request = "DROP TABLE users;";
             stmt = con.createStatement();
 
-            stmt.execute(sql);
+            stmt.execute(request);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -39,23 +68,38 @@ public class UserDaoJDBCImpl extends  Util implements UserDao {
         }
     }
 
-    public void saveUser(String name, String lastName, byte age) {
-        PreparedStatement ppStatement = null;
-        String request = "INSERT INTO users(name, lastName, age) values(?, ?, ?);";
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
+        //preparedStatement падают на тестах, почему-то
+        //реализация в формате python f-строк
+        Connection con = null;
+        Statement stmt;
+        try {
+            String request = String.format("INSERT INTO users(name, lastname, age) values('%s', '%s', %d);", name, lastName, age);
+
+            con = Util.link();
+            stmt = con.createStatement();
+
+            stmt.execute(request);
+            System.out.println("Query OK.");
+        } catch (SQLException e) {
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void removeUserById(long id) {
-        //String sql = "SELECT * FROM pp1_4.users;";
         //return users.stream().filter(user -> users.getId() == id).findFirst.orElse(null);
 
-        PreparedStatement ppStatement = null;
-        String query = "DELETE FROM users where id=?;";
-
+        Statement stmt;
+        String query = String.format("DELETE FROM users WHERE id=%d;", id);
         try {
-            //подготовка запроса
-            ppStatement = con.prepareStatement(query);
-            ppStatement.setLong(1, user.getId());
-            ppStatement.executeUpdate(); //execute запроса с нужным id
+            con = Util.link();
+            stmt = con.createStatement();
+            stmt.execute(query);
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -74,6 +118,7 @@ public class UserDaoJDBCImpl extends  Util implements UserDao {
         User temp; //промежуточный буфер для юзера
 
         try {
+            con = Util.link();
             stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query) ;
 
@@ -90,8 +135,8 @@ public class UserDaoJDBCImpl extends  Util implements UserDao {
     }
 
     public void cleanUsersTable() {
-        Connection con = null;
-        Statement stmt;
+        con = Util.link();
+        Statement stmt = null;
         try {
             //поднимаем стейтмент, удаляем все строки из таблицы
             String query = "DELETE FROM users;";
@@ -102,8 +147,15 @@ public class UserDaoJDBCImpl extends  Util implements UserDao {
             e.printStackTrace();
         } finally {
             try {
-                con.close();
-            } catch (SQLException e) {
+                if (stmt != null) { stmt.close(); }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (con != null) { con.close(); }
+            }
+            catch (SQLException e) {
                 e.printStackTrace();
             }
         }

@@ -1,8 +1,0 @@
-/home/iv/Docs/github/Kata/src/main/java/jm/task/core/jdbc/model/User.java
-/home/iv/Docs/github/Kata/src/main/java/jm/task/core/jdbc/util/Util.java
-/home/iv/Docs/github/Kata/src/main/java/jm/task/core/jdbc/dao/UserDaoJDBCImpl.java
-/home/iv/Docs/github/Kata/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java
-/home/iv/Docs/github/Kata/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java
-/home/iv/Docs/github/Kata/src/main/java/jm/task/core/jdbc/service/UserService.java
-/home/iv/Docs/github/Kata/src/main/java/jm/task/core/jdbc/Main.java
-/home/iv/Docs/github/Kata/src/main/java/jm/task/core/jdbc/dao/UserDao.java
