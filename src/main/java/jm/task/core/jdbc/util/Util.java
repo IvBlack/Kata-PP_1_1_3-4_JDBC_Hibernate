@@ -1,25 +1,18 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
+import org.hibernate.service.ServiceRegistry;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Util {
-
-    /*
-    //попытка использовать вынесенный файл настроек утонула в Exceptions
-    Properties data = new Properties();
-
-    String url = data.getProperty("url");
-    String username = data.getProperty("login");
-    String password = data.getProperty("pass");
-
-    try (InputStream in = Files.newInputStream(Paths.get("db.properties"))) {
-            data.load(in);
-    } catch (IOException ex) {
-        ex.printStackTrace();
-    }
-    */
+    private static SessionFactory ssFactory;
 
     private final static String login = "root";
     private final static String pass = "yourpasswd";
@@ -52,4 +45,30 @@ public class Util {
         }
     }
     */
+
+    public static SessionFactory linkThroughHibernate() {
+        try {
+            Configuration cfg = new Configuration();
+            //Properties settings = new Properties();
+
+            //засетим настройки в окружение
+            cfg.setProperty(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+            cfg.setProperty(Environment.URL,
+                    "jdbc:mysql://localhost/pp1_4?serverTimezone=Europe/Moscow&useSSl=false");
+            cfg.setProperty(Environment.USER, "root");
+            cfg.setProperty(Environment.PASS, "yourpasswd");
+            cfg.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect");
+
+            cfg.addAnnotatedClass(User.class);
+
+            ServiceRegistry svReg = new StandardServiceRegistryBuilder()
+                    .applySettings(cfg.getProperties()).build();
+
+            ssFactory = cfg.configure().buildSessionFactory(svReg);
+        } catch (Throwable ex) {
+            System.err.println("Session failed " + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+        return ssFactory;
+    }
 }
